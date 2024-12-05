@@ -2,27 +2,46 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dna_helper/global.dart';
 import 'package:dna_helper/models/myInfo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 
 class Sign{
   final db = FirebaseFirestore.instance;
   final auth = FirebaseAuth.instance;
 
+
+
   // 회원가입
   Future<bool> signUp(String email, String password, String name, String affiliation) async {
     try {
       UserCredential user = await auth.createUserWithEmailAndPassword(email: email, password: password);
-      await db.collection('users').doc(user.user!.uid).set({
-        'email': email,
-        'userType': userType,
-        'affiliation': affiliation,
-        'name': affiliation,
-        'selectedFarm': '',
-      });
+      if(userType == '실험자'){
+        await db.collection('users').doc(user.user!.uid).set({
+          'email': email,
+          'userType': userType,
+          'affiliation': affiliation,
+          'name': affiliation,
+          'selectedFarmName': '',
+          'selectedFarmAddress': '',
+          'isApproved': false,
+        });
+        return false;
+      }
+      else {
+        await db.collection('users').doc(user.user!.uid).set({
+          'email': email,
+          'userType': userType,
+          'affiliation': affiliation,
+          'name': affiliation,
+          'selectedFarmName': '',
+          'selectedFarmAddress': '',
+        });
+      }
       myInfo = MyInfo(
         documentId: user.user!.uid,
         name: name,
         userType: userType,
-        selectedFarm: '',
+        selectedFarmName: '',
+        selectedFarmAddress: '',
         affiliation: affiliation,
       );
       uid = user.user!.uid;
@@ -44,10 +63,23 @@ class Sign{
       myInfo = MyInfo.fromMap(data);
       uid = user.user!.uid;
 
+      if(myInfo.userType == '실험자'){
+        if(!myInfo.isApproved!){
+          Get.back();
+          if(!Get.isSnackbarOpen) {
+            Get.snackbar('실험자 승인 대기중', '실험자 승인 대기중입니다.');
+          }
+          return false;
+        }
+      }
       return true;
     } catch (e) {
       print('로그인 에러');
       print(e);
+      Get.back();
+      if(!Get.isSnackbarOpen) {
+        Get.snackbar('로그인 에러', '이메일 및 비밀번호를 확인해주세요.');
+      }
       return false;
     }
   }
@@ -55,7 +87,9 @@ class Sign{
   // 로그아웃
   Future<void> signOut() async {
     try {
+      uid = '';
       await auth.signOut();
+      print(uid);
     } catch (e) {
       print('로그아웃 에러');
       print(e);

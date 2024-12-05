@@ -1,5 +1,6 @@
 import 'package:dna_helper/global.dart';
 import 'package:dna_helper/models/collect.dart';
+import 'package:dna_helper/util/qrCode.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -7,10 +8,9 @@ class SampleDBController extends GetxController {
   List<int> data = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   List<TextEditingController>  textController = [];
 
-  RxList<Collect> collectList = <Collect>[
-    Collect(documentId: '1', identification: '', createdAt: DateTime.now(), name: '123', address: '123', farmName: '123')
-  ].obs;
+  RxList<Collect> collectList = <Collect>[].obs;
 
+  QrCode qr = QrCode();
 
   @override
   void onInit() {
@@ -26,8 +26,15 @@ class SampleDBController extends GetxController {
   }
 
   addCollect(Collect collect) async {
+    for(int i = 0; i < collectList.length; i++){
+      if(collectList[i].documentId == collect.documentId){
+        Get.snackbar('알림', '이미 등록된 개체입니다.');
+        return;
+      }
+    }
     collectList.insert(0, collect);
     textController.insert(0, TextEditingController());
+    print(collectList.length);
   }
 
   deleteIndex(size, index) {
@@ -135,6 +142,7 @@ class SampleDBController extends GetxController {
             borderRadius: BorderRadius.circular(16),
           ),
           contentPadding: const EdgeInsets.only(top: 30, bottom: 30),
+          actionsPadding: EdgeInsets.zero,
           content: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -201,6 +209,8 @@ class SampleDBController extends GetxController {
                   Expanded(
                     child: InkWell(
                       onTap: () {
+                        qr.qrCodeSetting(collectList);
+                        collectList.clear();
                         Get.back();
                       },
                       child: Container(

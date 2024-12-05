@@ -20,7 +20,7 @@ class MyPageView extends GetView<MyPageController> {
                 SizedBox(height: 30,),
                 Text('마이페이지',style: TextStyle(fontSize: 17,fontWeight: FontWeight.w600),),
                 SizedBox(height: 50,),
-                userType == '채취자' ? GestureDetector(
+                myInfo.userType == '채취자' ? GestureDetector(
                   onTap: (){
                     Get.toNamed('/farmManagementView');
                   },
@@ -40,7 +40,7 @@ class MyPageView extends GetView<MyPageController> {
                     ),
                   ),
                 ) : SizedBox(),
-                userType == '채취자' ? GestureDetector(
+                myInfo.userType == '채취자' ? GestureDetector(
                   onTap: (){
                     Get.toNamed('/allFarmingListView');
                   },
@@ -118,7 +118,8 @@ class MyPageView extends GetView<MyPageController> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: (){
+                  onTap: () async {
+                    await controller.signOut();
                     Get.offAllNamed('/loginView');
                   },
                   child: Container(

@@ -1,10 +1,13 @@
 import 'package:dna_helper/global.dart';
 import 'package:dna_helper/models/labs.dart';
+import 'package:dna_helper/util/sign.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MyPageController extends GetxController {
   RxInt selectLabsIndex = 0.obs;
+
+  Sign sign = Sign();
 
   List<Labs> labsList = [
     Labs(
@@ -34,6 +37,10 @@ class MyPageController extends GetxController {
     super.onClose();
   }
 
+  signOut() async {
+    await sign.signOut();
+  }
+
   deleteAccount(size) {
     showDialog(
       context: Get.context!,
@@ -43,6 +50,7 @@ class MyPageController extends GetxController {
             borderRadius: BorderRadius.circular(16),
           ),
           contentPadding: const EdgeInsets.only(top: 50, bottom: 30),
+          actionsPadding: EdgeInsets.zero,
           content: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,

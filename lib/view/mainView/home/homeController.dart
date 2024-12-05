@@ -71,6 +71,8 @@ class HomeController extends GetxController{
                             selectFarmIndex.value = index;
                             farmName.value = farm[index].farmName;
                             address.value = farm[index].address;
+                            myInfo.selectedFarmName = farm[index].farmName;
+                            myInfo.selectedFarmAddress = farm[index].address;
                             // Get.back();
                           },
                           child: Container(

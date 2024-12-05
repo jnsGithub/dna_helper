@@ -2,7 +2,7 @@ import 'package:dna_helper/component/widget.dart';
 import 'package:dna_helper/global.dart';
 import 'package:dna_helper/models/myInfo.dart';
 import 'package:dna_helper/util/addQR.dart';
-import 'package:dna_helper/util/qrCheck.dart';
+import 'package:dna_helper/util/qrCode.dart';
 import 'package:dna_helper/view/login/loginController.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -54,9 +54,18 @@ class LoginView extends GetView<LoginController> {
               ),
               const SizedBox(height: 29,),
               ElevatedButton(
-                onPressed: () {
-                  myInfo = MyInfo(documentId: '1', name: '김밥', userType: '채취자', selectedFarm: 'selectedFarm', affiliation: 'affiliation');
-                  Get.offAllNamed('/homeView');
+                onPressed: () async {
+                  saving(context);
+                  if(await controller.signIn()){
+                    if(myInfo.userType == '채취자') {
+                      Get.offAllNamed('/homeView');
+                    }
+                    else if(myInfo.userType == '실험자') {
+                      Get.offAllNamed('/testerHomeView');
+                    }
+                  }
+                  // myInfo = MyInfo(documentId: '1', name: '김밥', userType: '채취자', selectedFarmName: 'selectedFarmName', selectedFarmAddress: 'selectedFarmAddress', affiliation: 'affiliation');
+                  // Get.offAllNamed('/homeView');
                   // Get.offAllNamed('/testerHomeView');
                 },
                 style: ElevatedButton.styleFrom(
@@ -73,7 +82,7 @@ class LoginView extends GetView<LoginController> {
                     saving(context);
                     try{
                       QrCodeUploader a = QrCodeUploader();
-                      QRCheck b = QRCheck();
+                      QrCode b = QrCode();
                       // a.generateAndUploadQRCode(10);
                       b.checkQR('IRRY8ozO0tG3vssyjJRY');
                       Get.back();

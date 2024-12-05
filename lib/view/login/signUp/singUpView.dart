@@ -1,5 +1,6 @@
 import 'package:dna_helper/component/widget.dart';
 import 'package:dna_helper/global.dart';
+import 'package:dna_helper/models/myInfo.dart';
 import 'package:dna_helper/view/login/signUp/signUpController.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -117,18 +118,29 @@ class SignUpView extends GetView<SignUpController> {
                           borderRadius: BorderRadius.circular(6),
                         ),
                       ),
-                      onPressed: (){
-                        if(userType == '채취자'){
-                          Get.offAllNamed('/homeView');
+                      onPressed: () async {
+                        if(!controller.isValidEmail(controller.emailController.text)){
+                          if(!Get.isSnackbarOpen){
+                            Get.snackbar('알림', '이메일 양식을 확인해주세요.');
+                          }
+                          return;
                         }
-                        else{
-                          Get.offAllNamed('/testerHomeView', arguments: [0, false]);
+                        if(controller.isComplete.value){
+                          saving(context);
+                          if(await controller.signUp()){
+                            Get.offAllNamed('/homeView');
+                          }
+                          else {
+                            Get.offAllNamed('/loginView');
+                            Get.snackbar('알림', '관리자 승인이 완료되면 로그인이 가능합니다.');
+                          }
                         }
                       },
                       child: Text('가입하기', style: TextStyle(fontSize: 16, color: controller.isComplete.value ? Colors.white : Colors.black, fontWeight: FontWeight.w500),),
                   ),
                 ),
               ),
+              SizedBox(height: 30),
             ],
           ),
         ),

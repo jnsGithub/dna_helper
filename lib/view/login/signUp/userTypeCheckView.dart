@@ -57,7 +57,7 @@ class UserTypeCheckView extends StatelessWidget {
                         ),),
                         SizedBox(height: 22),
                         Text('실험자가 가입할 수 있으며\n별도의 승인이 필요해요',style: TextStyle(
-                            fontSize: 14,fontWeight: FontWeight.w400,color: gray800
+                            fontSize: 13,fontWeight: FontWeight.w400,color: gray800
                         ),)
                       ],
                     ),
@@ -89,7 +89,7 @@ class UserTypeCheckView extends StatelessWidget {
                         ),),
                         const SizedBox(height: 22),
                         const Text('채취자가 가입할 수 있으며\n별도의 승인이 필요없어요',style: TextStyle(
-                            fontSize: 14,fontWeight: FontWeight.w400,color: gray600
+                            fontSize: 13,fontWeight: FontWeight.w400,color: gray600
                         ),)
                       ],
                     ),

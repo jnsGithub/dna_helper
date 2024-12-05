@@ -1,4 +1,5 @@
 import 'package:dna_helper/global.dart';
+import 'package:dna_helper/util/sign.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,6 +9,8 @@ class SignUpController extends GetxController {
   TextEditingController passwordController = TextEditingController();
   TextEditingController passwordCheckController = TextEditingController();
   TextEditingController nameController = TextEditingController();
+
+  Sign sign = Sign();
 
   RxInt selected = (-1).obs;
 
@@ -48,6 +51,19 @@ class SignUpController extends GetxController {
     super.dispose();
   }
 
+  signUp() async {
+     return await sign.signUp(emailController.text, passwordController.text, nameController.text, group.value);
+  }
+
+  bool isValidEmail(String email) {
+    // 정규식으로 이메일 형식 검증
+    final RegExp emailRegex = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    );
+    print(emailRegex.hasMatch(email));
+    return emailRegex.hasMatch(email);
+  }
+
   void _validateForm() {
     if (emailController.text != ''
         && passwordController.text != ''
@@ -56,7 +72,8 @@ class SignUpController extends GetxController {
         && isCheck2.value == true
         && nameController.text != ''
         && group.value != ''
-        && passwordController.text == passwordCheckController.text) {
+        && passwordController.text == passwordCheckController.text
+        && passwordController.text.length >= 6) {
       isComplete.value = true;
     } else {
       isComplete.value = false;

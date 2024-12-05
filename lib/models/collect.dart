@@ -5,7 +5,7 @@ class Collect{
   String identification;
   final DateTime createdAt;
   final String name;
-  final String address;
+  final String farmAddress;
   final String farmName;
 
   Collect({
@@ -13,7 +13,7 @@ class Collect{
     required this.identification,
     required this.createdAt,
     required this.name,
-    required this.address,
+    required this.farmAddress,
     required this.farmName,
   });
 
@@ -23,18 +23,18 @@ class Collect{
       identification: map['identification'],
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       name: map['name'],
-      address: map['address'],
+      farmAddress: map['address'],
       farmName: map['farmName'],
     );
   }
 
-  Map toMap(){
+  Map<String, dynamic> toMap(){
     return {
       'documentId': documentId,
       'identification': identification,
       'createdAt': createdAt,
       'name': name,
-      'address': address,
+      'address': farmAddress,
       'farmName': farmName,
     };
   }
