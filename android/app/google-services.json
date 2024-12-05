@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "522811093592",
+    "project_id": "dna-helper",
+    "storage_bucket": "dna-helper.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:522811093592:android:f2f5abb546c660d8c8102d",
+        "android_client_info": {
+          "package_name": "com.dna.helper.app.dna_helper"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLMjnVe9F9Ops0HaLa_Nn5veGVOlIUKsQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
