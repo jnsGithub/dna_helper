@@ -1,5 +1,6 @@
 import 'package:dna_helper/global.dart';
-import 'package:dna_helper/models/labs.dart';
+import 'package:dna_helper/models/affiliation.dart';
+import 'package:dna_helper/util/mainData.dart';
 import 'package:dna_helper/util/sign.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,28 +9,16 @@ class MyPageController extends GetxController {
   RxInt selectLabsIndex = 0.obs;
 
   Sign sign = Sign();
+  MainData affiliation = MainData();
 
-  List<Labs> labsList = [
-    Labs(
-      documentId: '1',
-      title: '제이제이 실험기관',
-    ),
-    Labs(
-      documentId: '2',
-      title: '실험 기관명 1',
-    ),
-    Labs(
-      documentId: '3',
-      title: '실험 기관명 2',
-    ),
-    Labs(
-      documentId: '4',
-      title: '실험 기관명 3',
-    ),
-  ];
   @override
   void onInit() {
     super.onInit();
+    for(int i = 0; i < affiliationList.length; i++){
+      if(affiliationList[i].affiliation == myInfo.affiliation){
+        selectLabsIndex.value = i;
+      }
+    }
   }
 
   @override
@@ -146,13 +135,19 @@ class MyPageController extends GetxController {
           child: SizedBox(
             height: 370,
             child: ListView.builder(
-              itemCount: labsList.length,
+              itemCount: affiliationList.length,
               itemBuilder: (context, index) {
                 return Obx(() => Column(
                   children: [
                     GestureDetector(
                       onTap: () {
-                        selectLabsIndex.value = index;
+                        myInfo.affiliation = affiliationList[index].affiliation;
+                        for(int i = 0; i < affiliationList.length; i++){
+                          if(affiliationList[i].affiliation == myInfo.affiliation){
+                            selectLabsIndex.value = i;
+                          }
+                        }
+                        affiliation.updateAffiliation(affiliationList[index].affiliation);
                         // Get.back();
                       },
                       child: Container(
@@ -179,7 +174,7 @@ class MyPageController extends GetxController {
                               // child: Icon(Icons.check, color: selected.value == index ? Colors.white : gray300, size: 20,),
                             ),
                             SizedBox(width: 20,),
-                            Text(labsList[index].title, style: TextStyle(
+                            Text(affiliationList[index].affiliation, style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600),),
                           ],

@@ -2,6 +2,7 @@ import 'package:dna_helper/component/widget.dart';
 import 'package:dna_helper/global.dart';
 import 'package:dna_helper/models/myInfo.dart';
 import 'package:dna_helper/util/addQR.dart';
+import 'package:dna_helper/util/mainData.dart';
 import 'package:dna_helper/util/qrCode.dart';
 import 'package:dna_helper/view/login/loginController.dart';
 import 'package:get/get.dart';
@@ -57,6 +58,7 @@ class LoginView extends GetView<LoginController> {
                 onPressed: () async {
                   saving(context);
                   if(await controller.signIn()){
+                    await init();
                     if(myInfo.userType == '채취자') {
                       Get.offAllNamed('/homeView');
                     }
@@ -77,19 +79,19 @@ class LoginView extends GetView<LoginController> {
                 ),
                 child: const Text('로그인', style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500),),
               ),
-              TextButton(
-                  onPressed: () async {
-                    saving(context);
-                    try{
-                      QrCodeUploader a = QrCodeUploader();
-                      QrCode b = QrCode();
-                      // a.generateAndUploadQRCode(10);
-                      b.checkQR('IRRY8ozO0tG3vssyjJRY');
-                      Get.back();
-                    }catch(e){
-                      print(e);
-                    }
-                  }, child: Text('TextButton', style: TextStyle(color: Colors.yellow),))
+              // TextButton(
+              //     onPressed: () async {
+              //       saving(context);
+              //       try{
+              //         QrCodeUploader a = QrCodeUploader();
+              //         QrCode b = QrCode();
+              //         // a.generateAndUploadQRCode(10);
+              //         b.checkQR('IRRY8ozO0tG3vssyjJRY');
+              //         Get.back();
+              //       }catch(e){
+              //         print(e);
+              //       }
+              //     }, child: Text('TextButton', style: TextStyle(color: Colors.yellow),))
             ],
           ),
         ),

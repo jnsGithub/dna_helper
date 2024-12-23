@@ -1,3 +1,4 @@
+import 'package:dna_helper/models/collect.dart';
 import 'package:get/get.dart';
 
 class TesterHomeController extends GetxController{

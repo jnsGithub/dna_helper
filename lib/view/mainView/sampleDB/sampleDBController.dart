@@ -1,6 +1,7 @@
 import 'package:dna_helper/global.dart';
 import 'package:dna_helper/models/collect.dart';
 import 'package:dna_helper/util/qrCode.dart';
+import 'package:dna_helper/util/transExcel.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,6 +15,7 @@ class SampleDBController extends GetxController {
 
   @override
   void onInit() {
+    init();
     super.onInit();
     for(int i = 0; i < collectList.length; i++){
       textController.add(TextEditingController());
@@ -25,16 +27,36 @@ class SampleDBController extends GetxController {
     super.onClose();
   }
 
+  init() async {
+    await getTempQrCode();
+  }
+
   addCollect(Collect collect) async {
     for(int i = 0; i < collectList.length; i++){
       if(collectList[i].documentId == collect.documentId){
-        Get.snackbar('알림', '이미 등록된 개체입니다.');
+        if(!Get.isSnackbarOpen){
+          Get.snackbar('알림', '이미 등록된 개체입니다.');
+        }
         return;
       }
     }
     collectList.insert(0, collect);
     textController.insert(0, TextEditingController());
     print(collectList.length);
+  }
+
+  setTempQrCode() async {
+    await qr.tempSave(collectList);
+  }
+
+  getTempQrCode() async {
+    collectList.clear();
+    List<Collect> list = await qr.getTempQrCode();
+    for(int i = 0; i < list.length; i++){
+      collectList.add(list[i]);
+      textController.add(TextEditingController());
+      textController[i].text = list[i].identification;
+    }
   }
 
   deleteIndex(size, index) {
@@ -107,7 +129,9 @@ class SampleDBController extends GetxController {
                   Expanded(
                     child: InkWell(
                       onTap: () {
+                        // qr.tempDelete(collectList[index].documentId);
                         collectList.removeAt(index);
+                        textController.removeAt(index);
                         Get.back();
                       },
                       child: Container(
@@ -147,7 +171,7 @@ class SampleDBController extends GetxController {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('샘플 DB를 관리자에게 전송 및 엑셀\n다운로드를 진행하시겠습니까?',
+              Text('샘플 채취이력을 저장 및\n관리자에게 전송하시겠습니까?',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   height: 1.5,
@@ -208,10 +232,19 @@ class SampleDBController extends GetxController {
                   ),
                   Expanded(
                     child: InkWell(
-                      onTap: () {
-                        qr.qrCodeSetting(collectList);
-                        collectList.clear();
+                      onTap: () async {
                         Get.back();
+                        saving(context);
+                        for(int i = 0; i < collectList.length; i++){
+                          await qr.tempDelete(collectList[i].documentId);
+                        }
+                        await qr.qrCodeSetting(collectList);
+                        // if(collectList.length != 0){
+                        //   await TransExcel().toExcel(collectList);
+                        //   Get.back();
+                        // }
+                        collectList.clear();
+                        textController.clear();
                       },
                       child: Container(
                         height: 48.1,

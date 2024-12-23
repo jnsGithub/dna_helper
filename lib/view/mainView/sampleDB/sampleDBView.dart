@@ -36,8 +36,12 @@ class SampleDBView extends GetView<SampleDBController> {
                           borderRadius: BorderRadius.circular(6),
                         ),
                       ),
-                      onPressed: (){
-
+                      onPressed: () async {
+                        await controller.setTempQrCode();
+                        print(myInfo.selectedFarmName.runtimeType);
+                        if(!Get.isSnackbarOpen && controller.collectList.length != 0){
+                          Get.snackbar('저장 완료', '저장 완료되었습니다.');
+                        }
                       },
                       child: Text('저장')
                   ),
@@ -162,9 +166,16 @@ class SampleDBView extends GetView<SampleDBController> {
                     ),
                   ),
                   onPressed: (){
+                    if(myInfo.selectedFarmName == ''){
+                      Get.snackbar('농장 선택', '마이페이지에서 농장을 선택해주세요.', backgroundColor: Colors.white, colorText: Colors.black);
+                      return;
+                    }else if(controller.collectList.length == 0){
+                      Get.snackbar('샘플 정보 없음', '샘플을 추가해주세요.', backgroundColor: Colors.white, colorText: Colors.black);
+                      return;
+                    }
                     controller.sendOrDownload(size);
                   },
-                  child: Text('전송 및 액셀 다운로드', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w500),)),
+                  child: Text('채취 이력 저장 및 전송', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w500),)),
             )
 
           ],

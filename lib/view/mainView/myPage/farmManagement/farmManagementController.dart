@@ -1,15 +1,41 @@
 import 'package:dna_helper/global.dart';
+import 'package:dna_helper/util/mainData.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kpostal/kpostal.dart';
+import 'package:remedi_kopo/remedi_kopo.dart';
 
 class FarmManagementController extends GetxController {
   TextEditingController addressController = TextEditingController();
   TextEditingController addressDetailController = TextEditingController();
   TextEditingController farmNameController = TextEditingController();
 
+  MainData mainData = MainData();
+
   FocusNode addressFocus = FocusNode();
   RxString address = ''.obs;
+
+  Future kopoModel (context) async {
+    // KopoModel? model = await Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => RemediKopo(),
+    //   ),
+    // );
+    Kpostal model = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => KpostalView()
+        )
+    );
+    if(model != null){
+        address.value = model.address!;
+        // startingPostcode.value = model.zonecode!;
+        // FocusScope.of(Get.context!).requestFocus(startAddressDetail);
+    }
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -19,7 +45,15 @@ class FarmManagementController extends GetxController {
     super.onClose();
   }
 
-  deleteIndex(size) {
+  addFarmInfo() async {
+    mainData.addFarm(farmNameController.text, (address.value + ' ' + addressDetailController.text));
+    farmNameController.clear();
+    addressDetailController.clear();
+    address.value = '';
+    await init();
+  }
+
+  deleteIndex(Size size, int index) {
     showDialog(
       context: Get.context!,
       builder: (BuildContext context) {
@@ -39,12 +73,6 @@ class FarmManagementController extends GetxController {
                   fontSize: 18,
                   fontWeight: FontWeight.w600, color: font3030
               ),),
-              // SizedBox(height: 10),
-              // Text(
-              //   '거절 시, 해당 콜 배정이 안됩니다', style: TextStyle(
-              //     fontSize: 18,
-              //     fontWeight: FontWeight.w600, color: mainColor
-              // ),),
             ],
           ),
           actions: [
@@ -90,7 +118,9 @@ class FarmManagementController extends GetxController {
                   ),
                   Expanded(
                     child: InkWell(
-                      onTap: () {
+                      onTap: () async {
+                        await mainData.deleteFarm(farmList[index].documentId, farmList[index].farmName, farmList[index].farmAddress);
+                        // farmList.removeAt(index);
                         Get.back();
                       },
                       child: Container(

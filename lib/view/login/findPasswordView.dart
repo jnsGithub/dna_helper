@@ -57,7 +57,10 @@ class FindPasswordView extends GetView<LoginController> {
                     backgroundColor: mainColor,
                   ),
                   onPressed: (){
-
+                    controller.sign.resetPassword(emailController.text);
+                    if(!Get.isSnackbarOpen){
+                      Get.snackbar('비밀번호 찾기', '비밀번호 재설정 메일을 전송했습니다.');
+                    }
                   },
                   child: const Text('비밀번호 찾기'),
                 ),

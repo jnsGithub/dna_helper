@@ -19,7 +19,16 @@ class MyPageView extends GetView<MyPageController> {
               children: [
                 SizedBox(height: 30,),
                 Text('마이페이지',style: TextStyle(fontSize: 17,fontWeight: FontWeight.w600),),
-                SizedBox(height: 50,),
+                SizedBox(height: 30,),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(myInfo.name,style: TextStyle(fontSize: 18, color: gray900, fontWeight: FontWeight.w500),),
+                    SizedBox(height: 16,),
+                    Text(myInfo.email,style: TextStyle(fontSize: 16, color:gray700, fontWeight: FontWeight.w500),),
+                  ],
+                ),
+                SizedBox(height: 30,),
                 myInfo.userType == '채취자' ? GestureDetector(
                   onTap: (){
                     Get.toNamed('/farmManagementView');
@@ -82,6 +91,7 @@ class MyPageView extends GetView<MyPageController> {
                 ),
                 GestureDetector(
                   onTap: (){
+                    launchUrl('https://learned-print-ace.notion.site/160a262ebf2580c88206d7c753c1266b?pvs=4');
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 20,horizontal: 5),
@@ -100,6 +110,7 @@ class MyPageView extends GetView<MyPageController> {
                   ),
                 ),GestureDetector(
                   onTap: (){
+                    launchUrl('https://learned-print-ace.notion.site/160a262ebf258043a2fcc8c31f78a5fd?pvs=4');
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 20,horizontal: 5),
@@ -120,6 +131,7 @@ class MyPageView extends GetView<MyPageController> {
                 GestureDetector(
                   onTap: () async {
                     await controller.signOut();
+                    farmList.clear();
                     Get.offAllNamed('/loginView');
                   },
                   child: Container(

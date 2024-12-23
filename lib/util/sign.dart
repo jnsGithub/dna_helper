@@ -19,7 +19,7 @@ class Sign{
           'email': email,
           'userType': userType,
           'affiliation': affiliation,
-          'name': affiliation,
+          'name': name,
           'selectedFarmName': '',
           'selectedFarmAddress': '',
           'isApproved': false,
@@ -31,7 +31,7 @@ class Sign{
           'email': email,
           'userType': userType,
           'affiliation': affiliation,
-          'name': affiliation,
+          'name': name,
           'selectedFarmName': '',
           'selectedFarmAddress': '',
         });
@@ -40,11 +40,11 @@ class Sign{
         documentId: user.user!.uid,
         name: name,
         userType: userType,
+        email: email,
         selectedFarmName: '',
         selectedFarmAddress: '',
         affiliation: affiliation,
       );
-      uid = user.user!.uid;
       return true;
     } catch (e) {
       print('회원가입 에러');
@@ -61,7 +61,8 @@ class Sign{
       Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
       data['documentId'] = snapshot.id;
       myInfo = MyInfo.fromMap(data);
-      uid = user.user!.uid;
+      print(myInfo.selectedFarmAddress);
+      print(myInfo.selectedFarmName);
 
       if(myInfo.userType == '실험자'){
         if(!myInfo.isApproved!){
@@ -88,6 +89,15 @@ class Sign{
   Future<void> signOut() async {
     try {
       uid = '';
+      myInfo = MyInfo(
+        documentId: '',
+        name: '',
+        userType: '',
+        email: '',
+        selectedFarmName: '',
+        selectedFarmAddress: '',
+        affiliation: '',
+      );
       await auth.signOut();
       print(uid);
     } catch (e) {

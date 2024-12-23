@@ -4,17 +4,21 @@ class Collect{
   final String documentId;
   String identification;
   final DateTime createdAt;
-  final String name;
+  final String scannerName;
+  final String scannerId;
   final String farmAddress;
   final String farmName;
+  final String affiliation;
 
   Collect({
     required this.documentId,
     required this.identification,
     required this.createdAt,
-    required this.name,
+    required this.scannerName,
+    required this.scannerId,
     required this.farmAddress,
     required this.farmName,
+    required this.affiliation,
   });
 
   factory Collect.fromMap(Map<String, dynamic> map){
@@ -22,9 +26,11 @@ class Collect{
       documentId: map['documentId'],
       identification: map['identification'],
       createdAt: (map['createdAt'] as Timestamp).toDate(),
-      name: map['name'],
+      scannerName: map['scannerName'],
+      scannerId: map['scannerId'],
       farmAddress: map['address'],
       farmName: map['farmName'],
+      affiliation: map['affiliation'],
     );
   }
 
@@ -33,9 +39,11 @@ class Collect{
       'documentId': documentId,
       'identification': identification,
       'createdAt': createdAt,
-      'name': name,
+      'scannerName': scannerName,
+      'scannerId': scannerId,
       'address': farmAddress,
       'farmName': farmName,
+      'affiliation': affiliation,
     };
   }
 }

@@ -1,4 +1,5 @@
 import 'package:dna_helper/global.dart';
+import 'package:dna_helper/view/mainView/home/homeController.dart';
 import 'package:dna_helper/view/mainView/myPage/farmManagement/farmManagementController.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -32,7 +33,7 @@ class FarmManagementView extends GetView<FarmManagementController> {
                     ),
                     child: TextField(
                       controller: controller.farmNameController,
-                      readOnly: true,
+                      readOnly: false,
                       decoration: InputDecoration(
                         border: InputBorder.none, // 밑줄 없애기
                         contentPadding: EdgeInsets.symmetric(horizontal: 16), // TextField 내부의 패딩 적용
@@ -54,38 +55,43 @@ class FarmManagementView extends GetView<FarmManagementController> {
                     child: Obx(()=>
                         Column(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                    alignment: Alignment.centerLeft,
-                                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                                    width: size.width*0.6333,
-                                    height: size.width*0.1282,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(6),
-                                        color: const Color(0xfff6f6fa)),
-                                    child: Text(controller.address.value == '' ? '우편번호를 검색하세요' : controller.address.value,style: TextStyle(
-                                        fontSize: 15,
-                                        color: controller.address.value == '' ? Color(0xffAEAEB2) : Colors.black
-                                    ),)
-                                ),
-                                Container(
-                                  width: size.width*0.2590,
-                                  height: size.width*0.1282,
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
-                                    color: mainColor,
+                            GestureDetector(
+                              onTap: (){
+                                controller.kopoModel(context);
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                      alignment: Alignment.centerLeft,
+                                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                                      width: size.width*0.6333,
+                                      height: size.width*0.1282,
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(6),
+                                          color: const Color(0xfff6f6fa)),
+                                      child: Text(controller.address.value == '' ? '우편번호를 검색하세요' : controller.address.value,style: TextStyle(
+                                          fontSize: 15,
+                                          color: controller.address.value == '' ? Color(0xffAEAEB2) : Colors.black
+                                      ),)
                                   ),
-                                  child: const Text('우편번호 검색',style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white
-                                  ),),
-                                )
-                              ],
+                                  Container(
+                                    width: size.width*0.2590,
+                                    height: size.width*0.1282,
+                                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: mainColor,
+                                    ),
+                                    child: const Text('우편번호 검색',style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white
+                                    ),),
+                                  )
+                                ],
+                              ),
                             ),
                             const SizedBox(height: 9,),
                             Container(
@@ -124,8 +130,18 @@ class FarmManagementView extends GetView<FarmManagementController> {
                           borderRadius: BorderRadius.circular(6),
                         ),
                       ),
-                      onPressed: (){
-
+                      onPressed: () async {
+                        if(controller.farmNameController.text == ''){
+                          Get.snackbar('농장명 입력', '농장명을 입력해주세요.', backgroundColor: Colors.white, colorText: Colors.black);
+                          return;
+                        }
+                        else if(controller.address.value == ''){
+                          Get.snackbar('주소 입력', '주소를 입력해주세요.', backgroundColor: Colors.white, colorText: Colors.black);
+                          return;
+                        }
+                        await controller.addFarmInfo();
+                        var controller2 = Get.find<HomeController>();
+                        controller2.init();
                       },
                       child: Text('저장', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w500),)
                   )
@@ -149,45 +165,46 @@ class FarmManagementView extends GetView<FarmManagementController> {
               ),),
             ),
             SafeArea(
-              child: ListView.separated(
-                physics: const NeverScrollableScrollPhysics(),
-                separatorBuilder: (context, index) => const Divider(
-                  color: Color(0xffE1E1E1),
-                  thickness: 1,
-                ),
-                shrinkWrap: true,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: 10,
-                  itemBuilder: (context, index){
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('에이비씨 농장', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),),
-                              GestureDetector(
-                                onTap: (){
-                                  controller.deleteIndex(size);
-                                },
-                                child: Image(image: AssetImage('assets/images/delete.png'),width: 20,height: 20,),
-                              )
-                            ],
-                          ),
-                          SizedBox(height: 15,),
-                          Container(
-                            width: size.width * 0.7,
-                              child: Text(
-                                '서울시 강남구 역삼동 123-456',
-                                maxLines: 2,
-                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, height: 1.5),)),
-                        ],
-                      ),
-                    );
-                  }
+              child: Obx(() => ListView.separated(
+                  physics: const NeverScrollableScrollPhysics(),
+                  separatorBuilder: (context, index) => const Divider(
+                    color: Color(0xffE1E1E1),
+                    thickness: 1,
                   ),
+                  shrinkWrap: true,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: farmList.length,
+                    itemBuilder: (context, index){
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(farmList[index].farmName, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),),
+                                GestureDetector(
+                                  onTap: (){
+                                    controller.deleteIndex(size, index);
+                                  },
+                                  child: Image(image: AssetImage('assets/images/delete.png'),width: 20,height: 20,),
+                                )
+                              ],
+                            ),
+                            SizedBox(height: 15,),
+                            Container(
+                              width: size.width * 0.7,
+                                child: Text(
+                                  farmList[index].farmAddress,
+                                  maxLines: 2,
+                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, height: 1.5),)),
+                          ],
+                        ),
+                      );
+                    }
+                    ),
+              ),
             )
           ],
         ),

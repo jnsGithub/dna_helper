@@ -44,25 +44,25 @@ class _QrScanViewState extends State<QrScanView> {
             capture.barcodes.first.rawValue;
         debugPrint("Barcode scanned: $scannedValue");
 
-        /// The `Uint8List` image is only available if `returnImage` is set to `true`.
-        // final Uint8List? image = capture.image;
-        // debugPrint("Barcode image: $image");
-
-        /// row data of the barcode
-        // final Object? raw = capture.raw;
-        // debugPrint("Barcode raw: $raw");
-
-        /// List of scanned barcodes if any
-        // final List<Barcode> barcodes = capture.barcodes;
-        // debugPrint("Barcode list: $barcodes");
-        
         QrCode qrCheck = QrCode();
-        if(userType == '실험자') {
+        print(myInfo.userType);
+        if(myInfo.userType == '실험자') {
           var controller = Get.find<TesterSampleDBController>();
           var controller2 = Get.find<TesterHomeController>();
-          controller.isExist.value = true;
-          controller2.selectedIndex.value = 0;
-          Get.offAllNamed('/testerHomeView');
+          controller.collect.value = await qrCheck.getCollect(scannedValue!);
+          if(controller.collect.value == null){
+            print('QR코드에 정보가 없음');
+            if(!Get.isSnackbarOpen){
+              Get.snackbar('QR코드에 정보가 없습니다.', '다른 QR코드를 스캔해주세요.', colorText: Colors.white, margin: EdgeInsets.only(bottom: 50), backgroundColor: Colors.black, snackPosition: SnackPosition.BOTTOM, animationDuration: Duration(milliseconds: 300));
+            }
+          }
+          else{
+            if(Get.isSnackbarOpen){
+              Get.back();
+            }
+            controller2.selectedIndex.value = 0;
+          }
+          // Get.offAllNamed('/testerHomeView');
         }
         else {
           if(await qrCheck.checkQR(scannedValue!)){
@@ -71,8 +71,15 @@ class _QrScanViewState extends State<QrScanView> {
             var controller2 = Get.find<HomeController>();
             controller2.selectIndex.value = 0;
             controller.addCollect(
-                Collect(documentId: scannedValue, identification: '', createdAt: DateTime.now(), name: myInfo.name, farmAddress: myInfo.selectedFarmAddress!, farmName: myInfo.selectedFarmName!)
-            );
+                Collect(
+                    documentId: scannedValue,
+                    identification: '',
+                    createdAt: DateTime.now(),
+                    scannerName: myInfo.name,
+                    scannerId: myInfo.documentId,
+                    farmAddress: myInfo.selectedFarmAddress!,
+                    farmName: myInfo.selectedFarmName!,
+                    affiliation: myInfo.affiliation));
           }
           // Get.offAllNamed('/homeView');
         }
